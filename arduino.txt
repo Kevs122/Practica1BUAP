@@ -1,0 +1,61 @@
+int ledPin1 = 4;  // Primer LED (PWM controlado) en GPIO4 (D2)
+int ledPin2 = 5;  // Segundo LED (juego de luces) en GPIO5 (D1)
+
+void setup() {
+  pinMode(ledPin1, OUTPUT);    // Configurar GPIO4 como salida para el LED 1
+  pinMode(ledPin2, OUTPUT);    // Configurar GPIO5 como salida para el LED 2
+  Serial.begin(115200);        // Iniciar la comunicación serial
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();  // Leer el comando recibido vía serial
+
+    if (command == 'H') {
+      digitalWrite(ledPin1, HIGH);  // Encender el LED 1
+      Serial.println("Comando H recibido: Encendiendo LED 1");
+    } 
+    else if (command == 'L') {
+      digitalWrite(ledPin1, LOW);   // Apagar el LED 1
+      Serial.println("Comando L recibido: Apagando LED 1");
+    }
+    else if (command == '3') {  
+      // Tarea 3: Juego de luces con ambos LEDs
+      Serial.println("Comando 3 recibido: Activando juego de luces");
+      for (int i = 0; i < 10; i++) {  
+        digitalWrite(ledPin1, HIGH);  // Encender LED 1
+        delay(200);
+        digitalWrite(ledPin1, LOW);   // Apagar LED 1
+        digitalWrite(ledPin2, HIGH);  // Encender LED 2
+        delay(200);
+        digitalWrite(ledPin2, LOW);   // Apagar LED 2
+      }
+    }
+    else if (command == '4') {
+      // Tarea 4: Efecto de cambio de intensidad en LED 1, y parpadeo en LED 2
+      Serial.println("Comando 4 recibido: Ciclo de intensidad y parpadeo");
+      for (int i = 0; i < 1024; i += 128) {  // Ciclo de intensidad gradual en LED 1
+        analogWrite(ledPin1, i);
+        digitalWrite(ledPin2, i % 2 == 0 ? HIGH : LOW);  // Parpadeo en LED 2
+        delay(200);
+      }
+      // Apagar los LEDs al finalizar
+      digitalWrite(ledPin1, LOW);
+      digitalWrite(ledPin2, LOW);
+    }
+    else if (command == 'P') {
+      // Tarea 5: Luces de policía
+      Serial.println("Comando P recibido: Activando luces de policía");
+      for (int i = 0; i < 10; i++) {  // Parpadeo alternado
+        digitalWrite(ledPin1, HIGH);   // Encender LED 1
+        digitalWrite(ledPin2, LOW);    // Apagar LED 2
+        delay(200);                    // Esperar 200 ms
+        digitalWrite(ledPin1, LOW);    // Apagar LED 1
+        digitalWrite(ledPin2, HIGH);   // Encender LED 2
+        delay(200);                    // Esperar 200 ms
+      }
+      digitalWrite(ledPin1, LOW);      // Apagar ambos LEDs al final
+      digitalWrite(ledPin2, LOW);
+    }
+  }
+}
